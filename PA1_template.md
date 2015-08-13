@@ -6,9 +6,9 @@ output:
 ---
 
   
-## Loading and preprocessing the data  
+### Loading and preprocessing the data  
 
-Load the data and process/transform the data into a format suitable for analysis.
+Load the data. No processing/transforming is needed to start analysis.
 
 
 ```r
@@ -26,7 +26,7 @@ The variables included in this dataset are:
 
 - **interval**: Identifier for the 5-minute interval in which measurement was taken
 
-## What is mean total number of steps taken per day?  
+### What is mean total number of steps taken per day?  
 
 For this part, the missing values have been ignored in the dataset.
 
@@ -53,9 +53,9 @@ median_st <- median(tot_steps$x, na.rm=TRUE)
 
 The mean of the total number of steps taken per day is 1.0766189 &times; 10<sup>4</sup> and the median is 10765.
 
-## What is the average daily activity pattern?  
+### What is the average daily activity pattern?  
 
-Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+Compute the average steps across all days per 5 minute interval and plot to examine the pattern of activity.
 
 
 ```r
@@ -67,16 +67,19 @@ plot(avg_steps, type = "l",
 
 ![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
 
-Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+Compute the 5 minute intervals that average the maximum and minimun number of steps.
 
 
 ```r
 max_int <- which.max(avg_steps$x)
+min_int <- which.min(avg_steps$x)
 ```
 
 Interval 104, on average across all days in the dataset, contains the maximum number of steps (206.1698113 steps)
 
-## Imputing missing values
+Interval 9, on average across all days in the dataset, contains the minimum number of steps (0 steps)
+
+### Imputing missing values
 
 There are a number of days/intervals where there are missing values (coded as NA). The presence of missing days may introduce bias into some calculations or summaries of the data.
 
@@ -87,11 +90,9 @@ So, calculate and report the total number of missing values in the dataset (i.e.
 na_count <- sum(is.na(act_mon$steps))
 ```
 
-The total number of rows with NAs is 2304 or 13.1147541%.
+The total number of rows with NAs is 2304 or 13.1%.
 
-Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
-
-Create a new dataset that is equal to the original dataset but with the missing data filled in.
+To understand the possible bias introduced by NAs, imput the missing values by using the mean per 5 minute interval calculated and graphed prior to create a new dataset.
 
 
 ```r
@@ -104,7 +105,7 @@ for (i in 1:nrow(cleaned_am)) {
 }
 ```
 
-Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. 
+Make a histogram of the total number of steps taken each day and calculate the mean and median total number of steps taken per day. 
 
 
 ```r
@@ -121,13 +122,11 @@ median_clean <- median(cleaned_steps$x)
 
 The mean of the total number of steps taken per day is 1.0766189 &times; 10<sup>4</sup> and the median is 1.0766189 &times; 10<sup>4</sup>.
 
-Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+The mean and median differ only slightly between the 2 datasets (with NAs and with inputed values), so the impact is minimal. 
 
-## Are there differences in activity patterns between weekdays and weekends?
+### Are there differences in activity patterns between weekdays and weekends?
 
-For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.
-
-Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+Continuing with the dataset with the filled-in missing values, compare weekday and weekend activity levels by creating a new factor variable in the dataset.
 
 
 ```r
@@ -135,7 +134,9 @@ cleaned_am$day <- factor(weekdays(as.Date(cleaned_am$date)))
 cleaned_am$day_type <- factor(ifelse(cleaned_am$day=="Saturday" | cleaned_am$day=="Sunday", "weekend", "weekday"))
 ```
 
-Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the following, which was created using simulated data:
+Compute the average steps across weekdays and weekends per 5 minute interval and plot to examine the pattern of activity.
+
+using a panel plot, the comparison of weekdays and weekends shows the subject tends to wake later and averages more steps on a weekend day.
 
 
 ```r
@@ -150,3 +151,9 @@ xyplot(x ~ Group.1|Group.2,
 ```
 
 ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png) 
+
+```r
+day_cleaned_steps <- aggregate(cleaned_am$steps, list(cleaned_am$day_type), FUN=mean)
+```
+
+For reference, the average number of steps per 5 minute interval on a weekday is 35.6105812 and on a weekend, 42.3664013.
