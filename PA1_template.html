@@ -306,14 +306,16 @@ median_clean &lt;- median(cleaned_steps$x)
 <p>Continuing with the dataset with the filled-in missing values, compare weekday and weekend activity levels by creating a new factor variable in the dataset.</p>
 
 <pre><code class="r">cleaned_am$day &lt;- factor(weekdays(as.Date(cleaned_am$date)))
-cleaned_am$day_type &lt;- factor(ifelse(cleaned_am$day==&quot;Saturday&quot; | cleaned_am$day==&quot;Sunday&quot;, &quot;weekend&quot;, &quot;weekday&quot;))
+cleaned_am$day_type &lt;- factor(ifelse(cleaned_am$day==&quot;Saturday&quot; | cleaned_am$day==&quot;Sunday&quot;,
+                                     &quot;weekend&quot;, &quot;weekday&quot;))
 </code></pre>
 
 <p>Compute the average steps across weekdays and weekends per 5 minute interval and plot to examine the pattern of activity.</p>
 
 <p>using a panel plot, the comparison of weekdays and weekends shows the subject tends to wake later and averages more steps on a weekend day.</p>
 
-<pre><code class="r">avg_cleaned_steps &lt;- aggregate(cleaned_am$steps, list(cleaned_am$interval, cleaned_am$day_type), FUN=mean)
+<pre><code class="r">avg_cleaned_steps &lt;- aggregate(cleaned_am$steps, 
+                               list(cleaned_am$interval, cleaned_am$day_type), FUN=mean)
 library(lattice)
 xyplot(x ~ Group.1|Group.2, 
            data = avg_cleaned_steps,

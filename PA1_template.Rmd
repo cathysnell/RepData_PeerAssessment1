@@ -112,7 +112,8 @@ Continuing with the dataset with the filled-in missing values, compare weekday a
 
 ```{r}
 cleaned_am$day <- factor(weekdays(as.Date(cleaned_am$date)))
-cleaned_am$day_type <- factor(ifelse(cleaned_am$day=="Saturday" | cleaned_am$day=="Sunday", "weekend", "weekday"))
+cleaned_am$day_type <- factor(ifelse(cleaned_am$day=="Saturday" | cleaned_am$day=="Sunday",
+                                     "weekend", "weekday"))
 ```
 
 Compute the average steps across weekdays and weekends per 5 minute interval and plot to examine the pattern of activity.
@@ -120,7 +121,8 @@ Compute the average steps across weekdays and weekends per 5 minute interval and
 using a panel plot, the comparison of weekdays and weekends shows the subject tends to wake later and averages more steps on a weekend day.
 
 ```{r}
-avg_cleaned_steps <- aggregate(cleaned_am$steps, list(cleaned_am$interval, cleaned_am$day_type), FUN=mean)
+avg_cleaned_steps <- aggregate(cleaned_am$steps, 
+                               list(cleaned_am$interval, cleaned_am$day_type), FUN=mean)
 library(lattice)
 xyplot(x ~ Group.1|Group.2, 
            data = avg_cleaned_steps,
